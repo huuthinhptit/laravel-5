@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Requests\CategoryFormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Session;
 
 class CategoryController extends Controller
 {
@@ -15,7 +18,7 @@ class CategoryController extends Controller
     public function index()
     {
         $category = Category::paginate(10);
-        return view('adminlte::category/index')->with('category',$category);
+        return view('category/index')->with('category',$category);
     }
 
     /**
@@ -25,7 +28,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('category/create');
     }
 
     /**
@@ -34,9 +37,13 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryFormRequest $request)
     {
-        //
+        $input = $request->all();
+
+        Category::create($input);
+
+        return redirect('category');
     }
 
     /**
@@ -47,7 +54,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category=Category::find($id);
+        return view('category/show',compact('category'));
     }
 
     /**
@@ -58,7 +66,8 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category=Category::find($id);
+        return view('category/edit',compact('category'));
     }
 
     /**
@@ -68,9 +77,15 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryFormRequest $request, $id)
     {
-        //
+        $model = Category::find($id);
+        $model->title = Input::get('title');
+        $model->status = Input::get('status');
+        $model->save();
+
+        Session::flash('message', 'Successfully updated category!');
+        return redirect('category');
     }
 
     /**
@@ -81,6 +96,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $model = Category::find($id);
+        $model->delete();
+
+        Session::flash('message', 'Successfully delete category!');
+        return redirect('category');
     }
 }
