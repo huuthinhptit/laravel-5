@@ -36,11 +36,12 @@ class CustomersAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
+        $total = count($this->customersRepository->all());
         $this->customersRepository->pushCriteria(new RequestCriteria($request));
         $this->customersRepository->pushCriteria(new LimitOffsetCriteria($request));
         $customers = $this->customersRepository->all();
 
-        return $this->sendResponse($customers->toArray(), 'Customers retrieved successfully');
+        return $this->sendResponse($customers->toArray(), $total, 'Customers retrieved successfully');
     }
 
     /**
