@@ -28,3 +28,10 @@ Route::delete('category/delete/{id?}','CategoryController@destroy');
 Route::group(['middleware' => 'auth'], function () {
 
 });
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');
+
+Route::resource('addresses', 'AddressController');
